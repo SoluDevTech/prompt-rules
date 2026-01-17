@@ -1,0 +1,15 @@
+  {
+    "mcpServers": {
+        "sonarqube": {
+            "type": "http",
+            "url": "http://localhost:9081/mcp",
+            "headers": {
+                "SONARQUBE_TOKEN": "squ_xxx"
+            }
+        },
+        "atlassian": {
+            "type": "http",
+            "url": "http://localhost:9000/mcp"
+        }
+    }
+}

@@ -5,21 +5,20 @@ services:
   sonarqube-mcp:
     image: mcp/sonarqube:latest
     container_name: mcp-sonarqube
-    env_file: .env
+    env_file: .env.sonar
     ports:
       - "9081:8081"
     restart: unless-stopped
 
-  jira-mcp:
-    image: guang1/jira-mcp:latest
-    container_name: mcp-jira
-    env_file: .env
-    environment:
-      - quarkus.mcp.server.stdio.enabled=true
-      - quarkus.log.console.enable=false
-      - quarkus.log.console.stderr=false
-    stdin_open: true
+  mcp-atlassian:
+    image: ghcr.io/sooperset/mcp-atlassian:latest
+    container_name: mcp-atlassian
     restart: unless-stopped
+    ports:
+      - "9000:9000"
+    env_file:
+      - .env.atlassian
+    command: ["--transport", "streamable-http", "--port", "9000", "-vv"]
 
   playwright-mcp:
     image: mcr.microsoft.com/playwright:latest
