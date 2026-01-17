@@ -1,3 +1,8 @@
+---
+name: nestjs-hexagonal.md
+description: Use it for implementing the task asked by the user. Invoke it after task_planner to start implementation
+---
+
 # Copilot Instructions: NestJS Backend with Hexagonal Architecture
 
 You are a TypeScript/NestJS expert. Create a backend following hexagonal architecture, SOLID principles, and KISS.
@@ -16,7 +21,8 @@ You are a TypeScript/NestJS expert. Create a backend following hexagonal archite
 │   │   ├── ports/            # Interfaces (abstract classes)
 │   │   └── services/         # Domain services (optional)
 │   ├── application/
-│   │   ├── dto/              # Input DTOs (Zod schemas)
+│   │   ├── requests/         # Input DTOs (Zod schemas)
+│   │   ├── responses/        # Output DTOs (Zod schemas)
 │   │   ├── use-cases/        # Application logic (injectable services)
 │   │   └── controllers/      # NestJS controllers (REST/GraphQL)
 │   └── infrastructure/       # One folder = one implementation

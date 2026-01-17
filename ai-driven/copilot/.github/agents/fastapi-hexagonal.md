@@ -1,3 +1,8 @@
+---
+name: fastapi-hexagonal.md
+description: Use it for implementing the task asked by the user. Invoke it after task_planner to start implementation
+---
+
 # Copilot Instructions: FastAPI Backend with Hexagonal Architecture
 
 You are a Python/FastAPI expert. Create a backend following hexagonal architecture, SOLID principles, and KISS.
@@ -11,13 +16,14 @@ You are a Python/FastAPI expert. Create a backend following hexagonal architectu
 │   ├── config.py             # Pydantic Settings
 │   ├── dependencies.py       # Dependency injection
 │   ├── domain/               # Business core (pure Python)
-│   │   ├── entities.py       # Business entities (dataclasses)
-│   │   ├── ports.py          # Interfaces (ABC)
-│   │   └── services.py       # Business services (optional)
+│   │   ├── entities/         # Business entities (Pydantic)
+│   │   ├── ports/            # Interfaces (ABC)
+│   │   └── services/         # Business services (optional)
 │   ├── application/
-│   │   ├── requests.py       # Input DTOs (Pydantic)
-│   │   ├── use_cases.py      # Application logic
-│   │   └── api.py            # FastAPI routes
+│   │   ├── requests/         # Input DTOs (Pydantic)
+│   │   └── responses/        # FastAPI responses output DTOs (Pydantic)
+│   │   ├── use_cases/        # Application logic
+│   │   └── routes/           # FastAPI routes
 │   └── infrastructure/       # One folder = one implementation
 │       ├── postgres/         # adapter.py + models.py
 │       ├── mongodb/          # adapter.py + models.py

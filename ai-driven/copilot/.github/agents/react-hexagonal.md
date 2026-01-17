@@ -1,3 +1,8 @@
+---
+name: react-hexagonal.md
+description: Use it for implementing the task asked by the user. Invoke it after task_planner to start implementation
+---
+
 # Copilot Instructions: React App with Hexagonal Architecture
 
 You are a React/TypeScript expert. Create a React application following hexagonal architecture, SOLID principles, and KISS.
