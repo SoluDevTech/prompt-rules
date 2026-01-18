@@ -1,3 +1,9 @@
 .env
 .env.*
-./ai-driven/opencode/.opencode/agents/*
+/ai-driven/**/agents
+.claude.json
+opencode.json
+node_modules
+bun.lock
+package-lock.json
+package.json

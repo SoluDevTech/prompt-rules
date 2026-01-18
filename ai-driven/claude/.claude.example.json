@@ -1,0 +1,23 @@
+  {
+    "mcpServers": {
+        "sonarqube": {
+            "type": "http",
+            "url": "http://localhost:9081/mcp",
+            "headers": {
+                "SONARQUBE_TOKEN": "squ_xxx"
+            }
+        },
+        "atlassian": {
+            "type": "http",
+            "url": "http://localhost:9000/mcp"
+        },
+        "duckduckgo-web-search": {
+            "type": "http",
+            "url": "http://localhost:9020/mcp"
+        },
+        "context7": {
+            "type": "http",
+            "url": "http://localhost:9021/mcp"
+        }
+    }
+}
