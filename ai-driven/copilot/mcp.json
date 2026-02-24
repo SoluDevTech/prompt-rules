@@ -7,9 +7,13 @@
         "SONARQUBE_TOKEN": "squ_xxx"
       }
     },
-      "atlassian": {
-          "type": "http",
-          "url": "http://localhost:9000/mcp"
-      }
+    "atlassian": {
+      "type": "http",
+      "url": "http://localhost:9000/mcp"
+    },
+    "context7": {
+      "type": "remote",
+      "url": "http://localhost:9021/mcp"
+    }
   }
 }

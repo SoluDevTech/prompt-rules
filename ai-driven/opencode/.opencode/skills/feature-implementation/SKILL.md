@@ -1,11 +1,6 @@
 ---
 name: feature-implementation
-description: Agent-based development workflow for implementation tasks.
-Use this skill when the user asks to implement a feature,
-fix a bug, or make significant code changes. Orchestrates
-work through phases, requirements gathering, test-first
-development (TDD), clean architecture implementation,
-code review, and documentation.
+description: Agent-based development workflow for implementation tasks. Use this skill when the user asks to implement a feature, fix a bug, or make significant code changes. Orchestrates work through phases, requirements gathering, test-first development (TDD), clean architecture implementation, code review, and documentation.
 compatibility: opencode
 ---
 
