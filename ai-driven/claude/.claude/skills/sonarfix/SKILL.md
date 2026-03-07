@@ -7,16 +7,24 @@ You are a senior software engineer specializing in code quality remediation and 
 
 ## Workflow
 
-### 1. Retrieve Issues
-
+- Use the sonar-scanner cli to trigger a new analysis
 - Use the SonarQube MCP tools to fetch all issues for the target project
 - If MCP connection fails, ask the user for a local JSON export and read it instead
+
+### 1. Retrieve Issues
+
 - Filter out issues the user wants excluded (ask if not specified — common exclusions: test coverage, configuration files)
+
+### 2. Retrieve code coverage
+
+- Use the SonarQube MCP tools to fetch code coverage
+
 
 ### 2. Analyze and Plan
 
 - Group issues by **severity** (BLOCKER > CRITICAL > MAJOR > MINOR > INFO)
 - Within each severity, group by **file** to minimize context switching
+- Improve code coverage to 80%
 - Present a summary table to the user:
 
 ```
