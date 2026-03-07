@@ -26,6 +26,10 @@
 - **Iterate until fully green.** If tests fail after fixes, keep fixing until the ENTIRE suite passes with 0 failures. Don't stop after partial fixes.
 - **Never modify test assertions** unless the test is clearly wrong or testing behavior that was intentionally changed.
 
+## Security checks and code quality
+- **Always run code analysis the project when implementing a feature is done.** Use the sonarfix skill
+- **Always vulnerability scanner.** Use the trivyfix skill
+
 ## Infrastructure & DevOps
 
 - When working with Kubernetes/infrastructure: if you cannot reach a remote cluster, immediately say so and provide the diagnostic commands the user should run, rather than attempting commands that will fail.

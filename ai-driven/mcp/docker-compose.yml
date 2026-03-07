@@ -2,14 +2,6 @@
 version: '3.8'
 
 services:
-  sonarqube-mcp:
-    image: mcp/sonarqube:latest
-    container_name: mcp-sonarqube
-    env_file: .env.sonar
-    ports:
-      - "9081:8081"
-    restart: unless-stopped
-
   mcp-atlassian:
     image: ghcr.io/sooperset/mcp-atlassian:latest
     container_name: mcp-atlassian
@@ -20,18 +12,6 @@ services:
       - .env.atlassian
     command: ["--transport", "streamable-http", "--port", "9000", "-vv"]
 
-  duckduckgo:
-    image: mekayelanik/duckduckgo-mcp:stable
-    container_name: mcp-duckduckgo
-    restart: unless-stopped
-    ports:
-      - "9020:8020"
-    environment:
-      - PORT=8020
-      - PROTOCOL=SHTTP    # Streamable HTTP
-      - CORS=*
-      - TZ=Europe/Paris
-
   context7:
     image: mekayelanik/context7-mcp:stable
     container_name: mcp-context7
@@ -40,10 +20,3 @@ services:
       - "9021:8010"
     command:
       - "--bind-addr=0.0.0.0:8010"
-
-  playwright-mcp:
-    image: mcr.microsoft.com/playwright:latest
-    container_name: mcp-playwright
-    command: npx @playwright/mcp@latest --headless
-    stdin_open: true
-    restart: unless-stopped

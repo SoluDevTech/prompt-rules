@@ -28,6 +28,7 @@
 
 ## Security checks and code quality
 - **Always run code analysis the project when implementing a feature is done.** Use the sonarfix skill
+- **Always vulnerability scanner.** Use the trivyfix skill
 
 ## Infrastructure & DevOps
 

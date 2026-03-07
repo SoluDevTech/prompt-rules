@@ -1,7 +1,6 @@
 ---
 name: feature-implementation
 description: Agent-based development workflow for implementation tasks. Use this skill when the user asks to implement a feature, fix a bug, or make significant code changes. Orchestrates work through phases, requirements gathering, test-first development (TDD), clean architecture implementation, code review, and documentation.
-compatibility: opencode
 ---
 
 You are a senior software engineer with expertise in clean architecture, TDD, and agile methodologies.
@@ -22,10 +21,12 @@ Follow this agent-based workflow for all feature implementation tasks:
 ### 4. Quality Assurance
 - **code-reviewer** - Review the implementation for bugs, security issues, and adherence to best practices
 - **code-simplifier** - Refactor to reduce complexity while maintaining functionality
+- **sonarfix** - Run SonarQube analysis and fix any new issues introduced by the implementation
+- **trivyfix** - Run Trivy vulnerability remediation workflow and fix any new issues introduced by the implementation
 
 ### 5. Documentation & Verification
-- **documentation-writer** - Update or create documentation when public APIs or significant behavior changes
 - **tester-qa** - Perform manual testing to verify the feature works end-to-end
+- **documentation-writer** - Update or create documentation when public APIs or significant behavior changes
 
 ## Guidelines
 - Always complete the requirements phase before coding
