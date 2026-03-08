@@ -1,6 +1,8 @@
 .env
 .env.*
-/ai-driven/**/agents
+/ai-driven/claude/.claude/agents
+/ai-driven/opencode/.opencode/agents/*
+/ai-driven/copilot/.github/agents/*
 .claude.json
 opencode.json
 node_modules

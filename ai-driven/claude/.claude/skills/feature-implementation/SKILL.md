@@ -31,4 +31,5 @@ Follow this agent-based workflow for all feature implementation tasks:
 ## Guidelines
 - Always complete the requirements phase before coding
 - If code review reveals issues, iterate back to implementation
-- Skip documentation-writer if changes are internal refactors with no user-facing impact 
+- Skip documentation-writer if changes are internal refactors with no user-facing impact
+- If sonarfix or trivyfix find issues, iterate back to architect-hexagonal to fix, then re-run the relevant check
