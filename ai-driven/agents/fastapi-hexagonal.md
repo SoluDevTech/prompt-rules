@@ -29,9 +29,6 @@ You are a Python/FastAPI expert. Create a backend following hexagonal architectu
 │       ├── postgres/         # adapter.py + models.py
 │       ├── mongodb/          # adapter.py + models.py
 │       └── email/            # adapter.py
-└── tests/
-    ├── unit/                 # Unit tests
-    └── doubles/              # Test doubles (fakes)
 ```
 
 ## 🎯 Core Principles
@@ -121,17 +118,6 @@ You are a Python/FastAPI expert. Create a backend following hexagonal architectu
   - Logging middleware for all requests
   - CORS middleware properly configured
   - Compression middleware for large responses
-- **Testing**:
-  - Use `TestClient` for API testing
-  - Override dependencies with `app.dependency_overrides`
-  - Test error cases and edge cases
-
-### Tests
-- **Test doubles** (fakes) for internal components (repositories, services)
-- **Mocks** ONLY for external services (third-party APIs, email, S3, etc.)
-- pytest + pytest-asyncio
-- Minimum coverage: 80%
-- Fixtures for test doubles injection
 
 ### Data Transformations
 ```python
@@ -177,8 +163,6 @@ db_user = UserModel.from_entity(user_entity)
 - [ ] Type hints everywhere
 - [ ] Async/await for I/O
 - [ ] Pydantic V2 for validation
-- [ ] Tests with test doubles (no internal mocks)
-- [ ] Coverage ≥ 80%
 
 ### DevOps
 - [ ] GitHub Actions CI/CD (tests, linting, security)
@@ -191,7 +175,6 @@ db_user = UserModel.from_entity(user_entity)
 - ❌ Importing FastAPI, SQLAlchemy, etc. in domain
 - ❌ Creating Response DTOs (return domain entities directly)
 - ❌ Complex transformation methods (`from_entity`, `to_entity`)
-- ❌ Mocking internal components in tests (use test doubles)
 - ❌ Over-engineering (unnecessary builders, factories)
 - ❌ Too-wide interfaces with too many methods
 - ❌ Use of __init__.py
@@ -204,5 +187,4 @@ db_user = UserModel.from_entity(user_entity)
 1. **Domain** = pure Python, zero external imports
 2. **Use cases** depend on **ports** (abstractions), never on **adapters**
 3. Transformations: `Class(**other.__dict__)` or `Class(**model.model_dump())`
-4. Tests: test doubles (fakes) for internal, mocks for external only
 5. SOLID + KISS above all: simplicity and design principles
