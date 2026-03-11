@@ -51,6 +51,7 @@ prompt-rules/
     │   ├── .claude.example.json        # MCP server configuration template
     │   └── .claude/
     │       ├── CLAUDE.md               # Main workflow instructions
+    │       ├── settings.local.json     # Local settings (git-ignored)
     │       ├── agents/                 # Agent prompt files (copy of shared agents)
     │       └── skills/                 # Claude-specific skills
     │           ├── sonarfix/
@@ -83,7 +84,8 @@ prompt-rules/
     │
     └── mcp/                            # MCP server infrastructure
         ├── docker-compose.yml          # Service definitions
-        └── env.atlassian.example       # Atlassian env template
+        ├── env.atlassian.example       # Atlassian env template
+        └── env.sonar.example           # SonarQube env template
 ```
 
 ## Specialized Agents
@@ -404,6 +406,7 @@ cd ai-driven/mcp
 
 ```bash
 cp env.atlassian.example .env.atlassian
+cp env.sonar.example .env.sonar
 ```
 
 3. Edit the environment files with your credentials.
