@@ -36,4 +36,4 @@
 
 ## Language
 
-- The user works in French and English. Match the language of your responses to the language of the user's message.
+- The user works in French and English. Match the language of your responses to the language of the user's message. 
