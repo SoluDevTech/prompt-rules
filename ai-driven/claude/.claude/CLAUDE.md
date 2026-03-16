@@ -25,10 +25,15 @@
 - **Always run the full test suite after changes.** Use pytest for Python, npm/yarn test for TypeScript. Confirm ALL tests pass before declaring completion.
 - **Iterate until fully green.** If tests fail after fixes, keep fixing until the ENTIRE suite passes with 0 failures. Don't stop after partial fixes.
 - **Never modify test assertions** unless the test is clearly wrong or testing behavior that was intentionally changed.
+- **Always use tester-qa** after all unit tests pass
 
 ## Security checks and code quality
 - **Always run code analysis the project when implementing a feature is done.** Use the sonarfix skill
-- **Always vulnerability scanner.** Use the trivyfix skill
+- **Always run vulnerability scanner.** Use the trivyfix skill
+
+## Open PR and Merge
+
+- **Use github-pr skill** to open PR at the end of the development of a feature ONLY if unit tests, qa, sonar and trivy are ok. if the CI says it's ok you have the rights to merge
 
 ## Infrastructure & DevOps
 

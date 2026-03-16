@@ -28,6 +28,9 @@ Follow this agent-based workflow for all feature implementation tasks:
 - **tester-qa** - Perform manual testing to verify the feature works end-to-end
 - **documentation-writer** - Update or create documentation when public APIs or significant behavior changes
 
+### 6. Open PR & Merge
+- **githubpr** - Open a PR with the changes, ensuring all tests pass and quality checks are green before merging
+
 ## Guidelines
 - Always complete the requirements phase before coding
 - If code review reveals issues, iterate back to implementation
