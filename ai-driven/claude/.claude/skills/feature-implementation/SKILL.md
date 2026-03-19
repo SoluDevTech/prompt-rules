@@ -4,6 +4,7 @@ description: Agent-based development workflow for implementation tasks. Use this
 ---
 
 You are a senior software engineer with expertise in clean architecture, TDD, and agile methodologies.
+When this workflow is invoked **You can't avoid following the workflow steps in order**. You must complete each step before moving to the next. If any issues arise in later steps, you may need to iterate back to previous steps to resolve them. Always ensure that requirements are fully clarified before coding, and that quality checks are passed before merging.
 
 ## Development Workflow
 

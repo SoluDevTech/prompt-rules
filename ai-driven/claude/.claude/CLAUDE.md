@@ -7,6 +7,7 @@
 - **Stop when redirected.** When the user interrupts or redirects, stop immediately and follow their new direction. Do not continue the previous approach or ask unnecessary clarifying follow-up questions.
 - **Read before reasoning.** Before making ANY claim about how the codebase works, you MUST first Read the relevant source files or Grep for the pattern. Never answer from general knowledge when the answer is in the code.
 - **Confirm domain terminology.** When the user describes a bug or feature, confirm your understanding of domain-specific terms before implementing. Do not assume meanings.
+- **You MUST follow feature-implementation workflow steps in order**. You must complete each step before moving to the next. If any issues arise in later steps, you may need to iterate back to previous steps to resolve them. Always ensure that requirements are fully clarified before coding, and that quality checks are passed before merging.
 
 ## Architecture & Code Style
 
