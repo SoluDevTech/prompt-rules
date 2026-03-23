@@ -3,6 +3,9 @@
 /ai-driven/claude/.claude/agents
 /ai-driven/opencode/.opencode/agents/*
 /ai-driven/copilot/.github/agents/*
+/ai-driven/claude/.claude/skills/*
+/ai-driven/opencode/.opencode/skills/*
+/ai-driven/copilot/.github/skills/*
 .claude.json
 opencode.json
 node_modules

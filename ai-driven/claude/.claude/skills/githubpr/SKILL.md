@@ -42,7 +42,7 @@ gh pr create \
   --title "PROJ-123: <short ticket summary>" \
   --body "$(cat <<'EOF'
 ## Jira
-[PROJ-123](https://your-instance.atlassian.net/browse/PROJ-123)
+[PROJ-123](https://soludevtech.atlassian.net/browse/PROJ-123)
 
 ## Changes
 - <point 1>
