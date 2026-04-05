@@ -13,10 +13,9 @@ services:
     command: ["--transport", "streamable-http", "--port", "9000", "-vv"]
 
   context7:
-    image: mekayelanik/context7-mcp:stable
+    image: mcp/context7:latest
     container_name: mcp-context7
     restart: unless-stopped
     ports:
-      - "9021:8010"
-    command:
-      - "--bind-addr=0.0.0.0:8010"
+      - "9021:8080"
+    command: []

@@ -237,6 +237,7 @@ You are a React/TypeScript expert. Create a React application following hexagona
 - ❌ Desktop-only designs (mobile traffic is 50%+ globally)
 - ❌ Ignoring touch interactions (hover states don't work on mobile)
 - ❌ Tiny touch targets (<44px on mobile)
+- ❌ Never use index.ts files for re exporting dependencies
 
 ## 📌 Critical Reminders
 

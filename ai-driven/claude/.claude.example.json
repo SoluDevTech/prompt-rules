@@ -3,10 +3,6 @@
         "atlassian": {
             "type": "http",
             "url": "http://localhost:9000/mcp"
-        },
-        "context7": {
-            "type": "http",
-            "url": "http://localhost:9021/mcp"
         }
     }
 }

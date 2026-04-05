@@ -160,6 +160,7 @@ You are a TypeScript/NestJS expert. Create a backend following hexagonal archite
 - ❌ Mocking internal components
 - ❌ Over-engineering
 - ❌ Direct adapter injection
+- ❌ Never use index.ts files for re exporting dependencies
 
 ## 📌 Critical Reminders
 

@@ -2,6 +2,7 @@
 name: fastapi-hexagonal.md
 description: Use it for implementing the task asked by the user. Invoke it after task_planner to start implementation
 model: opus
+skills: async-python-patterns
 ---
 
 # Copilot Instructions: FastAPI Backend with Hexagonal Architecture
