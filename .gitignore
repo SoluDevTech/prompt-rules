@@ -9,6 +9,7 @@
 /ai-driven/copilot/.github/skills/
 .claude.json
 opencode.json
+opencode-*.json
 node_modules
 bun.lock
 package-lock.json

@@ -33,6 +33,10 @@
 
 - When working with Kubernetes/infrastructure: if you cannot reach a remote cluster, immediately say so and provide the diagnostic commands the user should run, rather than attempting commands that will fail.
 
+## Git
+
+- **NEVER use `git reset --hard`.** It destroys uncommitted work irreversibly. To undo uncommitted changes, ask the user first, then prefer `git stash`, `git restore <file>`, or `git checkout -- <file>`. To move a branch, use `git reset --soft` / `git reset --mixed` (never hard). If a destructive git operation seems necessary, STOP and ask the user.
+
 ## Language
 
 - The user works in French and English. Match the language of your responses to the language of the user's message. 

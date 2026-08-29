@@ -5,7 +5,6 @@ description: Use it for implementing the task asked by the user. Invoke it after
 permission:
   mcp_*: deny
   context7_*: allow
-model: soludevtech/qwen3.6-35b
 ---
 
 ## Non-negotiable rules (all profiles)

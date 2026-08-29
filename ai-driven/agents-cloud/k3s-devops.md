@@ -1,7 +1,6 @@
 ---
 name: k3s-devops
 description: Use for changes in infrastucture, Invoke when the user asked about it
-model: soludevtech/qwen3.6-35b
 ---
 
 ## Non-negotiable rules (all profiles)

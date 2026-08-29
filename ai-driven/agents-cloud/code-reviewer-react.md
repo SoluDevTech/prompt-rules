@@ -1,7 +1,7 @@
 ---
 name: code-reviewer-react
 description: Code review agent for React/TypeScript. Auto-loads code-reviewer, hexagonal-react-patterns, async-react-patterns, performance-audit, and test-writer-react skills. Grades code across 6 dimensions with stack-specific knowledge. Invoke when reviewing React/TypeScript code in the implementation loop.
-model: soludevtech/qwen3.6-35b
+model: ollama-cloud/kimi-k2.7-code
 
 permission:
   mcp_*: deny

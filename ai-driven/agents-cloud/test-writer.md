@@ -3,7 +3,6 @@ name: test-writer
 description: Use to write unit and integration tests. Detects the stack (Python/FastAPI, React/TypeScript, NestJS/TypeScript) and loads the matching test-writer skill. Invoke when you need to test a use case, component, hook, controller, or adapter.
 permission:
   mcp_*: deny
-model: soludevtech/qwen3.6-35b
 ---
 
 ## Non-negotiable rules (all profiles)

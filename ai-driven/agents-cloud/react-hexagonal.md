@@ -6,7 +6,6 @@ permission:
   mcp_*: deny
   context7_*: allow
   open-design_*: allow
-model: soludevtech/qwen3.6-35b
 ---
 
 ## Non-negotiable rules (all profiles)

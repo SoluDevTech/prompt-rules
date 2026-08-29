@@ -1,7 +1,7 @@
 ---
 name: tester-qa
 description: Use to manually test the app after a functionality is done. Invoke when the developer finishes writing code and tests and documentation writer updated documentation.
-model: soludevtech/qwen3.6-35b
+model: ollama-cloud/kimi-k2.7-code
 permission:
   mcp_*: deny
   chrome-devtools_*: allow

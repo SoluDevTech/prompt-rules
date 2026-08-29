@@ -72,6 +72,7 @@ Two distinct scenarios — **load `references/merge-commands.md` before merging*
 - **Feature → `dev`**: use `gh pr merge --merge`
 - **`dev` → `main`**: **never use `gh pr merge`**. Use CLI `git merge --ff-only dev` + `git push origin main` (see `references/merge-commands.md`)
 - **Never force-push `dev` or `main`**
+- **Never use `git reset --hard`.** It destroys uncommitted work irreversibly. To undo uncommitted changes, ask the user first, then prefer `git stash`, `git restore <file>`, or `git checkout -- <file>`. To move a branch, use `git reset --soft` / `git reset --mixed` (never hard). If a destructive git operation seems necessary, STOP and ask the user.
 - On CI failure: log the ticket and **continue** to the next one — do not block the pipeline
 - PR title must always start with the ticket ID: `PROJ-123: ...`
 

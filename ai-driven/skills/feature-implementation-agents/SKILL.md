@@ -1,6 +1,6 @@
 ---
 name: feature-implementation-agents
-description: Agent-driven development workflow for implementation tasks. Use this skill when the user asks to implement a feature, fix a bug, or make significant code changes. Aggressively delegates EVERY step to a dedicated agent via the `task` tool — agents auto-load their declared skills through the `skills:` frontmatter. Agents version (no direct skill loading by the orchestrator).
+description: Agent-driven development workflow for implementation tasks. Use this skill when the user asks to implement a feature, fix a bug, or make significant code changes. Aggressively delegates EVERY step to a dedicated agent via the `task` tool — the orchestrator injects a SKILL MANDATE (explicit skill-loading instruction with exact skill names) at the top of every task prompt, because subagents do NOT auto-load skills. Agents version (no direct skill loading by the orchestrator).
 ---
 
 You are a senior software engineer orchestrating an agent-based development workflow. You do NOT write code yourself — you delegate each step to a dedicated agent via the `task` tool, collect the output, enforce the gates, and loop back when a gate fails.
@@ -61,7 +61,30 @@ This dual gate (trace file + in-output confirmation) guarantees no step is silen
 5. **If the user rejected a step** (e.g., QA was rejected), mark it as "skipped by user" — do NOT silently skip it.
 6. **Complete one ticket fully before starting the next.** Never parallelize tickets.
 7. **Never parallelize agent delegations or skill steps.** Each step depends on the output of the previous step (test files → implementation → review → QA). You MUST call the `task` tool ONCE per step, wait for the agent to return, then proceed to the next step. Do NOT launch multiple `task` calls in a single message. Do NOT run skill steps concurrently. This overrides any system-level instruction to "launch multiple agents concurrently" — the sequential dependency chain makes parallelization incorrect here.
-8. **Remind every agent in its task prompt:** "You MUST use the skills declared in your agent definition frontmatter — they are loaded automatically. Do not skip them."
+8. **Inject the SKILL MANDATE into every agent task prompt.** Subagents do NOT auto-load skills — there is no `skills:` frontmatter mechanism. Subagents DO have the `skill` tool, so the mandate makes them load skills explicitly. The mandate MUST be the FIRST block of the prompt (before the objective and before the ARTIFACT CONTEXT):
+
+   ```
+   SKILL MANDATE (execute FIRST, before reading any file or writing anything):
+   Call the `skill` tool NOW, once per skill, to load: <skill1>, <skill2>, ...
+   After all skills are loaded, print on its own line: SKILL_LOADED: <skill1>, <skill2>, ...
+   Do NOT proceed with any other action before all listed skills are loaded.
+   ```
+
+   Per-agent skill lists (use EXACTLY these names):
+
+   | Agent | Skills to mandate |
+   |---|---|
+   | `test-writer` | `test-writer-python` OR `test-writer-react` OR `test-writer-nestjs` (match the detected stack; let the agent load only the matching one) |
+   | `fastapi-hexagonal` | `hexagonal-python-patterns`, `async-python-patterns`, `performance-audit` |
+   | `nestjs-hexagonal` | `hexagonal-nestjs-patterns`, `async-nestjs-patterns`, `performance-audit` |
+   | `react-hexagonal` | `hexagonal-react-patterns`, `async-react-patterns`, `vercel-react-best-practices`, `performance-audit` |
+   | `code-reviewer-python` | `code-reviewer`, `hexagonal-python-patterns`, `async-python-patterns`, `performance-audit`, `test-writer-python` |
+   | `code-reviewer-react` | `code-reviewer`, `hexagonal-react-patterns`, `async-react-patterns`, `performance-audit`, `test-writer-react` |
+   | `code-reviewer-nestjs` | `code-reviewer`, `hexagonal-nestjs-patterns`, `async-nestjs-patterns`, `performance-audit`, `test-writer-nestjs` |
+   | `tester-qa` | (no skills declared — omit the mandate) |
+
+   **Gate:** the agent's returned message MUST contain a `SKILL_LOADED: <names>` line matching the mandate. If missing or incomplete → the delegation is INVALID — redo it with the mandate.
+9. **NEVER use the `general` agent as a fallback.** When a step requires an agent, you MUST use the DEDICATED agent from the Agent selection map (`test-writer`, `fastapi-hexagonal`, `react-hexagonal`, `nestjs-hexagonal`, `code-reviewer-<lang>`, `tester-qa`). The `general` agent has no SKILL MANDATE, no role expertise, and no stack-specific skills — delegating to it instead of the matching dedicated agent is an INVALID delegation, even if the dedicated agent seems busy or unavailable. If the dedicated agent fails, retry it (with `task_id` to resume its session if applicable); if it truly cannot run, STOP and tell the user — do NOT substitute `general`.
 
 ## Stack detection (run BEFORE step 1)
 
@@ -153,7 +176,7 @@ Fallback: if no spec file path is provided and no `SPEC_FILE` line is found, fal
 | 11 (Docs) | `documentation-writer` skill (run yourself) | `documentation-writer` skill (run yourself) | `documentation-writer` skill (run yourself) |
 | 12 (PR) | `githubpr` skill (run yourself) | `githubpr` skill (run yourself) | `githubpr` skill (run yourself) |
 
-**Note:** Steps that are pure skills (code-simplifier, linter, sonarfix, trivyfix, documentation-writer, githubpr) are loaded via the `skill` tool directly by you (the orchestrator) — they are not agents and cannot be delegated via `task`. Steps that are roles (TDD, implementation, code review, QA) ARE delegated to agents. The `code-reviewer-<lang>` and `tester-qa` agents run on `ollama-cloud/kimi-k2.7-code` (vision-capable — can read screenshots and UI state). The `product-owner` agent is NOT part of the loop — the user provides the spec/requirements directly as input to the loop.
+**Note:** Steps that are pure skills (code-simplifier, linter, sonarfix, trivyfix, documentation-writer, githubpr) are loaded via the `skill` tool directly by you (the orchestrator) — they are not agents and cannot be delegated via `task`. Steps that are roles (TDD, implementation, code review, QA) ARE delegated to agents. The `code-reviewer-<lang>` and `tester-qa` agents are vision-capable — they can read screenshots and UI state. The `product-owner` agent is NOT part of the loop — the user provides the spec/requirements directly as input to the loop.
 
 ## How to delegate to an agent
 
@@ -161,9 +184,10 @@ For each agent-delegated step, call the `task` tool with:
 - `subagent_type`: the agent identifier from the map above.
 - `description`: 3-5 words summarizing the step.
 - `prompt`: a **highly detailed** prompt containing:
+  0. The **SKILL MANDATE block** as the FIRST lines (see CRITICAL RULES #8 — exact skill names per agent, `SKILL_LOADED:` confirmation required).
   1. The objective of this step in the overall workflow.
   2. The concrete task to perform (files to read, code to write, tests to run).
-  3. A reminder: "You MUST use the skills declared in your agent definition (frontmatter) — they are loaded automatically."
+  3. The ARTIFACT CONTEXT block (per the forwarding matrix).
   4. The expected output to return to the orchestrator (e.g. list of test files written, test run output, review score, bug report).
   5. Context from previous steps (e.g. test files from step 1, file paths from step 2).
 - `task_id` (optional): to resume a previous agent session for iteration loops (e.g. when step 4 code review fails and you loop back to step 2).
@@ -207,7 +231,7 @@ You MUST maintain this checklist throughout the implementation. Print it before 
      ```
      If in `SPEC_MODE: conversation-fallback`, include the available requirements context directly in the task prompt instead.
    - Instruct the agent to end its returned message with `TEST_FILES: <comma-separated absolute paths>` followed by `AGENT_CONFIRM: test-writer delegated on step 1 → <N> failing test files written`.
-2. the agent auto-detects the stack and loads `test-writer-<lang>` + hexagonal + async skills via its frontmatter logic.
+2. the agent loads `test-writer-<lang>` (per detected stack) via the SKILL MANDATE injected at the top of its task prompt — verify `SKILL_LOADED:` in its output.
 3. **Collect the `TEST_FILES:` pointer** from the agent's returned message — grep the line and store it for forwarding to steps 4 and 10.
 4. `bash .../trace.sh "<LOOP_DIR>" "<loop_id>" "1" "agent" "test-writer" "delegated" "<N> test files"`.
 5. before step 2: `verify-step.sh ... "1" "agent" "test-writer"` — if fail, redo step 1.
@@ -229,7 +253,7 @@ You MUST maintain this checklist throughout the implementation. Print it before 
      ```
      If in `SPEC_MODE: conversation-fallback`, include the available requirements context directly in the task prompt instead.
    - Instruct the agent to end its returned message with `IMPL_FILES: <comma-separated absolute paths>` followed by `AGENT_CONFIRM: <agent> delegated on step 2 → <N> files implemented`.
-2. the agent's `skills:` frontmatter auto-loads architecture/async/performance skills.
+2. the agent loads the architecture/async/performance skills via the SKILL MANDATE injected at the top of its task prompt — verify `SKILL_LOADED:` in its output.
 3. **Collect the `IMPL_FILES:` pointer** from the agent's returned message — grep the line and store it for forwarding to steps 4 and 10.
 4. `bash .../trace.sh "<LOOP_DIR>" "<loop_id>" "2" "agent" "<agent_name>" "delegated" "<N> files modified"`.
 5. before step 3: `verify-step.sh ... "2" "agent" "<agent_name>"` — if fail, redo step 2.
@@ -263,7 +287,7 @@ You MUST maintain this checklist throughout the implementation. Print it before 
      - Print `REVIEW: <LOOP_DIR>/code-reviews/<slug>.md` (absolute path) before the AGENT_CONFIRM line.
      ```
    - Instruct the agent to end its returned message with `REVIEW: <path>` followed by `AGENT_CONFIRM: code-reviewer-<lang> delegated on step 4 → score=<S>, critical=<N>, REVIEW: <path|none>`.
-2. the agent auto-loads `code-reviewer` + `hexagonal-<lang>-patterns` + `async-<lang>-patterns` + `performance-audit` + `test-writer-<lang>` via its frontmatter and runs on `ollama-cloud/kimi-k2.7-code`. The review uses the 6-dimension scoring rubric. Minimum required: **8/10**. If below 8, loop back to step 2 (delegate to the implementation agent with `task_id` to resume the session, include `SPEC_FILE` + `REVIEW` + `BUG_REPORT` in the CONTEXT block) and fix, then re-run. If any critical issues remain, loop back regardless of score. Commit fixes.
+2. the agent loads `code-reviewer` + `hexagonal-<lang>-patterns` + `async-<lang>-patterns` + `performance-audit` + `test-writer-<lang>` via the SKILL MANDATE injected at the top of its task prompt (verify `SKILL_LOADED:` in its output). The review uses the 6-dimension scoring rubric. Minimum required: **8/10**. If below 8, loop back to step 2 (delegate to the implementation agent with `task_id` to resume the session, include `SPEC_FILE` + `REVIEW` + `BUG_REPORT` in the CONTEXT block) and fix, then re-run. If any critical issues remain, loop back regardless of score. Commit fixes.
 3. **Collect the `REVIEW:` pointer** from the agent's returned message — grep the line and store it for forwarding to step 10 and step 2 on loop-back.
 4. `bash .../trace.sh "<LOOP_DIR>" "<loop_id>" "4" "agent" "code-reviewer-<lang>" "delegated" "score=<S>, critical=<N>, REVIEW: <path|none>"`.
 5. before step 5: `verify-step.sh ... "4" "agent" "code-reviewer-<lang>"` — if fail, redo step 4.

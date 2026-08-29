@@ -1,9 +1,9 @@
 ---
 name: loop-implementation-review-agents
-description: Agent-driven implementation loop wrapping feature-implementation-agents. Aggressively delegates role steps to dedicated agents via the `task` tool (agents auto-load their declared skills via frontmatter) AND aggressively loads pure-skill steps (code-reviewer, code-simplifier, linter, sonarfix, trivyfix, documentation-writer, githubpr) via the `skill` tool directly. Adds mandatory NEW e2e QA tests in `soludev-compose-apps/<app_name>/e2e` (real path, NO leading `@`), a zero-critical-issues code review gate, one draft PR per modified repo, and a reviewer loop until 0 critical issues and score >= 8/10. Use when the user asks to implement a feature/evolution/bugfix and loop until QA, code review, and PR reviewer sign-off are all green — using agents as the execution layer for roles and skills as the execution layer for tooling steps.
+description: Agent-driven implementation loop wrapping feature-implementation-agents. Aggressively delegates role steps to dedicated agents via the `task` tool (the orchestrator injects a SKILL MANDATE with exact skill names at the top of every task prompt — subagents do NOT auto-load skills) AND aggressively loads pure-skill steps (code-reviewer, code-simplifier, linter, sonarfix, trivyfix, documentation-writer, githubpr) via the `skill` tool directly. Adds mandatory NEW e2e QA tests in `soludev-compose-apps/<app_name>/e2e` (real path, NO leading `@`), a zero-critical-issues code review gate, one draft PR per modified repo, and a reviewer loop until 0 critical issues and score >= 8/10. Use when the user asks to implement a feature/evolution/bugfix and loop until QA, code review, and PR reviewer sign-off are all green — using agents as the execution layer for roles and skills as the execution layer for tooling steps.
 ---
 
-You orchestrate an agent-driven implementation loop that wraps the **feature-implementation-agents** skill. Follow EVERY feature-implementation-agents step in order — none is optional, none can be skipped. feature-implementation-agents aggressively delegates role steps to agents (which auto-load their skills via frontmatter) and aggressively loads pure-skill steps via the `skill` tool, AND applies the trace & verification protocol from `/Users/yohan/.config/opencode/skills/_shared/TRACE_PROTOCOL.md` (trace file + in-output `AGENT_CONFIRM`/`SKILL_CONFIRM` confirmation + `verify-step.sh` gate before progressing). You enforce the gates below on top of it.
+You orchestrate an agent-driven implementation loop that wraps the **feature-implementation-agents** skill. Follow EVERY feature-implementation-agents step in order — none is optional, none can be skipped. feature-implementation-agents aggressively delegates role steps to agents (the orchestrator injects a SKILL MANDATE into every task prompt — subagents do NOT auto-load skills) and aggressively loads pure-skill steps via the `skill` tool, AND applies the trace & verification protocol from `/Users/yohan/.config/opencode/skills/_shared/TRACE_PROTOCOL.md` (trace file + in-output `AGENT_CONFIRM`/`SKILL_CONFIRM` confirmation + `verify-step.sh` gate before progressing). You enforce the gates below on top of it.
 
 ## Trace & verification (enforced)
 
@@ -25,12 +25,22 @@ The wrapped feature-implementation-agents skill writes a trace event to `<LOOP_D
 ## Conventions
 
 - Respect the global AGENTS.md.
-- Role steps (requirements, TDD, implementation, code review, QA) are delegated to agents via the `task` tool. Agents auto-load their declared skills through the `skills:` frontmatter — you remind them in every task prompt. The `code-reviewer-<lang>` and `tester-qa` agents run on `ollama-cloud/kimi-k2.7-code`.
+- Role steps (requirements, TDD, implementation, code review, QA) are delegated to agents via the `task` tool. Subagents do NOT auto-load skills — you MUST inject the SKILL MANDATE block (see feature-implementation-agents CRITICAL RULES #8) as the FIRST lines of every task prompt, and verify the agent's output contains `SKILL_LOADED: <names>`. Missing/incomplete `SKILL_LOADED:` → invalid delegation, redo it.
 - Pure-skill steps (simplification, linting, sonar, trivy, documentation, PR) are loaded via the `skill` tool directly by you (the orchestrator) — they are not agents.
-- Backend (Python/FastAPI) → `fastapi-hexagonal` agent (skills: `hexagonal-python-patterns`, `async-python-patterns`, `performance-audit`).
-- Backend (NestJS) → `nestjs-hexagonal` agent (skills: `hexagonal-nestjs-patterns`, `async-nestjs-patterns`, `performance-audit`).
-- Frontend / React App → `react-hexagonal` agent (skills: `hexagonal-react-patterns`, `async-react-patterns`, `vercel-react-best-practices`, `performance-audit`). Use OpenDesign MCP and respect the Open Design maquette and the `<app-name>` design system.
+- Backend (Python/FastAPI) → `fastapi-hexagonal` agent (SKILL MANDATE: `hexagonal-python-patterns`, `async-python-patterns`, `performance-audit`).
+- Backend (NestJS) → `nestjs-hexagonal` agent (SKILL MANDATE: `hexagonal-nestjs-patterns`, `async-nestjs-patterns`, `performance-audit`).
+- Frontend / React App → `react-hexagonal` agent (SKILL MANDATE: `hexagonal-react-patterns`, `async-react-patterns`, `vercel-react-best-practices`, `performance-audit`). Use OpenDesign MCP and respect the Open Design maquette and the `<app-name>` design system.
 - The orchestrator does NOT write code — it delegates to agents and loads skills for tooling steps.
+- **NEVER use the `general` agent as a fallback.** When a role step requires an agent, you MUST use the DEDICATED agent from the map above (`test-writer`, `fastapi-hexagonal`, `react-hexagonal`, `nestjs-hexagonal`, `code-reviewer-<lang>`, `tester-qa`). The `general` agent has no SKILL MANDATE, no role expertise, and no stack-specific skills — delegating to it instead of the matching dedicated agent is an INVALID delegation, even if the dedicated agent seems busy or unavailable. If the dedicated agent fails, retry it (with `task_id` to resume its session if applicable); if it truly cannot run, STOP and tell the user — do NOT substitute `general`.
+
+## SPEC reading + skill loading by subagents (non-negotiable, EVERY delegation)
+
+Every `task` prompt you send MUST satisfy BOTH of these, or the delegation is INVALID:
+
+1. **SKILL MANDATE first** — the FIRST block of the prompt is the SKILL MANDATE with the EXACT skill names for that agent. The agent MUST load them via the `skill` tool BEFORE any other action and print `SKILL_LOADED: <names>`. Missing/incomplete → redo the delegation with the mandate.
+2. **ARTIFACT CONTEXT with SPEC_FILE** — the prompt MUST include the ARTIFACT CONTEXT block (per the forwarding matrix) with at least the `SPEC_FILE: <path>` pointer (or, in `SPEC_MODE: conversation-fallback`, the requirements context inline). It MUST instruct the agent to `read` EVERY listed file IN FULL before any other action — never work from a summary or pasted excerpt. An agent that starts work without having read the spec produces an INVALID result — redo the delegation.
+
+Do NOT rely on the agent definition alone to enforce this: injecting the mandate and the CONTEXT block is the ORCHESTRATOR's responsibility on EVERY delegation — first pass, loop-backs, and re-reviews alike.
 
 ## Artifact forwarding (mandatory)
 
@@ -74,16 +84,16 @@ The wrapped feature-implementation-agents skill is aggressive about loading/dele
 
 | Step | Type | Load / delegate |
 |------|------|-----------------|
-| 1 (TDD) | agent | `task` → `test-writer` (auto-loads test-writer-<lang> + hexagonal + async) |
-| 2 (Impl) | agent | `task` → `fastapi-hexagonal` / `react-hexagonal` / `nestjs-hexagonal` (auto-loads architecture + async + performance) |
+| 1 (TDD) | agent | `task` → `test-writer` (SKILL MANDATE injects `test-writer-<lang>`; verify `SKILL_LOADED:`) |
+| 2 (Impl) | agent | `task` → `fastapi-hexagonal` / `react-hexagonal` / `nestjs-hexagonal` (SKILL MANDATE injects architecture + async + performance; verify `SKILL_LOADED:`) |
 | 3 (Test suite) | bash | run full test suite |
-| 4 (Review) | agent | `task` → `code-reviewer-python` / `code-reviewer-react` / `code-reviewer-nestjs` (auto-loads code-reviewer + hexagonal + async + performance-audit + test-writer skills; runs on kimi-k2.7-code) |
+| 4 (Review) | agent | `task` → `code-reviewer-python` / `code-reviewer-react` / `code-reviewer-nestjs` (SKILL MANDATE injects code-reviewer + hexagonal + async + performance-audit + test-writer; verify `SKILL_LOADED:`) |
 | 5 (Simplify) | skill | `skill` → `code-simplifier` |
 | 6 (Lint) | skill | `skill` → `linter` |
 | 7 (Unit tests) | bash | run all unit tests |
 | 8 (Sonar) | skill | `skill` → `sonarfix` |
 | 9 (Trivy) | skill | `skill` → `trivyfix` |
-| 10 (QA) | agent | `task` → `tester-qa` (auto-loads QA conventions; runs on kimi-k2.7-code) |
+| 10 (QA) | agent | `task` → `tester-qa` (no skills declared) |
 | 11 (Docs) | skill | `skill` → `documentation-writer` |
 | 12 (PR) | skill | `skill` → `githubpr` |
 
