@@ -3,10 +3,13 @@ name: k3s-devops
 description: Use for changes in infrastucture, Invoke when the user asked about it
 model: soludevtech/qwen3.6-35b
 ---
+## STEP 0 — BLOCKING SKILL GATE (overrides task-prompt ordering)
+
+Your VERY FIRST tool call(s) MUST be the `skill` tool to load: popeyescan, iac-review. Do NOT read any file (no spec, no source, no tests) and do NOT follow task-prompt steps before every skill above is loaded and you have printed `SKILL_LOADED: <names>`. If the task prompt mandates additional skills, load them in the same first batch. Only after this gate, follow the task prompt and the rest of this definition.
 
 ## Non-negotiable rules (all profiles)
 
-1. **Read the spec IN FULL first.** If your task prompt contains an `ARTIFACT CONTEXT` block or any `SPEC_FILE:` / `TEST_FILES:` / `IMPL_FILES:` / `REVIEW:` / `BUG_REPORT:` pointer lines, use the `read` tool to read EVERY listed file IN FULL before any other action. Never work from a summary or a pasted excerpt — a truncated or summarized reading is an INVALID execution; redo it.
+1. **Read the spec IN FULL first — but ONLY AFTER the STEP 0 skill gate.** If your task prompt contains an `ARTIFACT CONTEXT` block or any `SPEC_FILE:` / `TEST_FILES:` / `IMPL_FILES:` / `REVIEW:` / `BUG_REPORT:` pointer lines, use the `read` tool to read EVERY listed file IN FULL before any other action. Never work from a summary or a pasted excerpt — a truncated or summarized reading is an INVALID execution; redo it.
 2. **Load your skills FIRST.** Call the `skill` tool for every skill declared in your definition (or mandated in your task prompt) BEFORE reading files or writing anything. After loading, print `SKILL_LOADED: <names>`.
 3. **Git safety — NEVER use `git reset --hard`.** It destroys uncommitted work irreversibly. To undo uncommitted changes, ask the user first, then prefer `git stash`, `git restore <file>`, or `git checkout -- <file>`. To move a branch, use `git reset --soft` / `git reset --mixed` (never hard). If a destructive git operation seems necessary, STOP and ask the user.
 4. **Never delegate to the `general` agent.** If you ever delegate work via the `task` tool, use the dedicated matching agent only — delegating to `general` instead of the matching dedicated agent is an INVALID delegation.
